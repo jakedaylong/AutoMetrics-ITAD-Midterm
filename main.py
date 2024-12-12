@@ -3,10 +3,9 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 import seaborn as sns
-sns.set()
+sns.set_theme()
 
-cardata = pd.read_csv('cars.csv')
-
+cardata = pd.read_csv('.venv/cars.csv')
 
 cardata.describe(include='all')
 
@@ -70,6 +69,7 @@ ax2.scatter(data_cleaned['EngineV'], data_cleaned['Price'])
 ax2.set_title('Price and EngineV')
 ax3.scatter(data_cleaned['Mileage'], data_cleaned['Price'])
 ax3.set_title('Price and Mileage')
+plt.show()
 
 #print(data_cleaned.columns.values)
 
@@ -77,6 +77,8 @@ ax3.set_title('Price and Mileage')
 log_price = np.log(data_cleaned['Price'])
 data_cleaned['log_price'] = log_price
 data_no_multicollinearity = data_cleaned.drop(['Year'],axis=1)
+
+
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 variables = data_cleaned[['Mileage','Year','EngineV']]
 vif = pd.DataFrame()
@@ -98,12 +100,16 @@ data_preprocessed.head()
 targets = data_preprocessed['log_price']
 inputs = data_preprocessed.drop(['log_price'], axis=1)
 print(inputs)
+
+
 # Scale the data
 from sklearn.preprocessing import StandardScaler
 
 scaler = StandardScaler()
 scaler.fit(inputs)
 inputs_scaled = scaler.transform(inputs)
+
+
 from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(inputs_scaled, targets, test_size=0.2, random_state=365)
 
@@ -113,8 +119,12 @@ reg.fit(x_train,y_train)
 y_hat = reg.predict(x_train)
 
 plt.scatter(y_train, y_hat)
+m, b = np.polyfit(y_train, y_hat, 1)  # Calculate the slope and intercept
+plt.plot(y_train, m*y_train + b, color='blue')  # Add the regression line
 plt.xlabel('Targets (y_train)',size=18)
 plt.ylabel('Predictions (y_hat)',size=18)
 plt.xlim(6,13)
 plt.ylim(6,13)
 plt.show()
+
+exit(0)
